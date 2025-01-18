@@ -1,0 +1,67 @@
+<div class="flex justify-between relative h-screen">
+  <div class="w-2/12">
+    <div class="bg-custom-text h-full">
+      <h1 class="pt-8 text-center text-xl font-bold text-white">YAME DASHBOARD</h1>
+      <div class="relative h-5/6">
+        <div class="flex-col justify-between">
+          <div>
+            <div>
+              <button
+              class="text-xl mt-12 px-4 py-2"
+              [ngClass]="{'text-blue-100': activeComponent === 'statistical', 'text-white': activeComponent !== 'statistical'}"
+              (click)="showComponent('statistical')">THỐNG KÊ</button>
+            </div>
+            <div>
+              <button
+              class="text-xl mt-6 px-4 py-2"
+              [ngClass]="{'text-blue-100': activeComponent === 'product', 'text-white': activeComponent !== 'category'}"
+              (click)="showComponent('category')">DANH MỤC SẢN PHẨM</button>
+            </div>
+            <div>
+              <button
+              class="text-xl mt-6 px-4 py-2"
+              [ngClass]="{'text-blue-100': activeComponent === 'product', 'text-white': activeComponent !== 'product'}"
+              (click)="showComponent('product')">SẢN PHẨM</button>
+            </div>
+            <div>
+              <button
+              class="text-xl mt-6 px-4 py-2"
+              [ngClass]="{'text-blue-100': activeComponent === 'order', 'text-white': activeComponent !== 'order'}"
+              (click)="showComponent('order')">ĐƠN HÀNG</button>
+            </div>
+            <div>
+              <button
+              class="text-xl mt-6 px-4 py-2"
+              [ngClass]="{'text-blue-100': activeComponent === 'inventory', 'text-white': activeComponent !== 'inventory'}"
+              (click)="showComponent('inventory')">HÀNG TRONG KHO</button>
+            </div>
+            <div>
+              <button
+              class="text-xl mt-6 px-4 py-2"
+              [ngClass]="{'text-blue-100': activeComponent === 'warehouse', 'text-white': activeComponent !== 'warehouse'}"
+              (click)="showComponent('warehouse')">KHO HÀNG</button>
+            </div>
+          </div>
+        </div>
+        <div class="px-4 py-2 absolute bottom-0">
+          <div *ngIf="userInfo">
+            <p class="text-xl text-white"><i class="fa-solid fa-user mr-2 mb-4"></i>{{ userInfo.username }}</p>
+          </div>
+          <button (click)="onLogout()" class="text-xl text-white">Đăng Xuất</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-9/12">
+    <app-product-managerment *ngIf="activeComponent === 'product'"></app-product-managerment>
+    <app-order-managerment *ngIf="activeComponent === 'order'"></app-order-managerment>
+    <app-chart-bar *ngIf="activeComponent === 'statistical'"></app-chart-bar>
+    <app-warehouse-managerment *ngIf="activeComponent === 'warehouse'"></app-warehouse-managerment>
+    <app-inventory-managerment *ngIf="activeComponent === 'inventory'"></app-inventory-managerment>
+    <app-category-managerment *ngIf="activeComponent === 'category'"></app-category-managerment>
+  </div>
+</div>
+
+
+
+

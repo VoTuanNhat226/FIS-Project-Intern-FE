@@ -1,0 +1,126 @@
+<div class="overflow-y-auto h-full">
+  <h1 class="w-4/5 text-center text-4xl font-bold mt-8">QUẢN LÝ HÀNG HÓA</h1>
+  <!-- Header -->
+  <div class="flex justify-between w-4/5">
+    <!-- Search Input -->
+    <div>
+      <div class="flex items-center space-x-2 mt-8">
+        <input
+          type="text"
+          id="searchInput"
+          [(ngModel)]="searchTerm"
+          placeholder="Nhập tên nhà kho"
+          class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ml-1"
+        />
+        <button class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none"><i class="fa-solid fa-magnifying-glass mr-2"></i>Tìm kiếm</button>
+      </div>
+    </div>
+    <!-- Button Export Report and Create Product -->
+    <div class="flex justify-end mt-8">
+      <!-- Export Report -->
+      <div class="relative group">
+        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 z-40">Xuất báo cáo</button>
+        <!-- Dropdown options -->
+        <div class="absolute left-0 mt-2 w-32 bg-white border border-gray-300 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 z-40"><i class="fa-regular fa-file-pdf mr-2 text-red-500"></i>PDF</button>
+          <button class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 z-40"><i class="fa-regular fa-file-excel mr-2 text-green-500"></i>EXCEL</button>
+        </div>
+      </div>
+      <!-- Create Product -->
+      <button class="px-4 py-2 text-white rounded-md bg-blue-600 hover:bg-blue-700 hover:text-white ml-4 -mr-40" (click)="openCreateModal()">Thêm hàng</button>
+    </div>
+  </div>
+  <!-- Product Table -->
+  <table class="w-11/12 h-fit table-auto mt-8">
+    <thead class="bg-gray-100 top-0">
+      <tr>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Mã hàng</th>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Mã sản phẩm</th>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Mã nhà kho</th>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Tên sản phẩm</th>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Tên nhà kho</th>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Số lượng hàng còn lại</th>
+        <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let inventory of inventorys" class="border-b">
+        <td class="px-4 py-2 text-center text-sm text-gray-800">{{ inventory.id }}</td>
+        <td class="px-4 py-2 text-center text-sm text-gray-800">{{ inventory.product.id }}</td>
+        <td class="px-4 py-2 text-center text-sm text-gray-800">{{ inventory.warehouse.id }}</td>
+        <td class="px-4 py-2 text-center text-sm text-gray-800">{{ inventory.product.name }}</td>
+        <td class="px-4 py-2 text-center text-sm text-gray-800">{{ inventory.warehouse.name }}</td>
+        <td class="px-4 py-2 text-center text-sm text-gray-800">{{ inventory.quantity }}</td>
+        <td class="px-4 py-2 text-center text-sm text-gray-800">
+          <i class="fa-solid fa-trash ml-4 text-red-600 hover:cursor-pointer" (click)="handleDeleteInventory(inventory.id)"></i>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- Modal thêm hàng tồn kho -->
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" *ngIf="isCreateModalOpen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+    <h2 class="text-2xl font-bold mb-4 text-center">THÊM HÀNG</h2>
+    <form (ngSubmit)="createInventory()">
+      <div class="mb-4">
+        <label for="orderId" class="block text-sm font-semibold text-gray-700">Số lượng hàng</label>
+        <input
+          type="text"
+          id="orderId"
+          [(ngModel)]="newInventory.quantity"
+          name="orderId"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label for="product" class="block text-sm font-semibold text-gray-700">Sản phẩm</label>
+        <select
+          id="product"
+          [(ngModel)]="newInventory.product"
+          name="productId"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="" disabled selected>Chọn sản phẩm</option>
+          <option *ngFor="let product of products" [value]="product.id">
+            (id: {{ product.id }}) {{ product.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="product" class="block text-sm font-semibold text-gray-700">Nhà kho</label>
+        <select
+          id="product"
+          [(ngModel)]="newInventory.warehouse"
+          name="productId"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="" disabled selected>Chọn nhà kho</option>
+          <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+            {{ warehouse.name }}
+          </option>
+        </select>
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button
+        type="submit"
+        class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+        >
+        Thêm
+      </button>
+      <button
+        type="button"
+        class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-red-500 hover:text-white ml-4"
+        (click)="closeCreateModal()"
+      >
+        Hủy
+      </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<div>
+  <!-- Header -->
+  <div class="flex items-center justify-between w-full h-20 bg-header-bg fixed top-0 z-10">
+    <div class="flex">
+      <h1 class="text-3xl text-white ml-20 mr-20">YAME STORE</h1>
+      <div class="text-white">
+        <input
+          type="text"
+          id="searchInput"
+          [(ngModel)]="searchText"
+          placeholder="  Nhập tên sản phẩm"
+          class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-600 mr-4"
+        />
+        <button class=""><i class="fa-solid fa-magnifying-glass mr-2"></i>Tìm kiếm</button>
+      </div>
+    </div>
+    <div class="flex">
+      <div class="text-white">
+        <i class="fa-solid fa-phone -mr-2"></i>
+        <button class="pl-4">Gọi mua hàng</button>
+      </div>
+      <div class="text-white ml-8">
+        <i class="fa-solid fa-location-dot -mr-2"></i>
+        <button class="pl-4">Cửa hàng gần bạn</button>
+      </div>
+      <div class="text-white ml-8">
+        <i class="fa-solid fa-truck-fast -mr-2"></i>
+        <button class="pl-4">Tra cứu đơn hàng</button>
+      </div>
+      <div class="text-white ml-8">
+        <i class="fa-solid fa-cart-shopping -mr-2"></i>
+        <button class="pl-4">Giỏ hàng</button>
+      </div>
+      <div *ngIf="!isLogin" class="mr-20 text-white ml-8 flex">
+        <i class="fa-solid fa-user -mr-2"></i>
+        <button class="pl-4" (click)="toLogin()">Đăng nhập</button>
+      </div>
+      <div *ngIf="isLogin" class="text-white ml-8">
+        <i class="fa-solid fa-circle-user -mr-2"></i>
+        <button class="pl-4">{{userInfo.username}}</button>
+      </div>
+      <div *ngIf="isLogin" class="mr-20 text-white ml-8">
+        <i class="fa-solid fa-right-from-bracket -mr-2"></i>
+        <button class="pl-4" (click)="toLogout()">Đăng xuất</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="mt-36 text-black container mx-auto px-8">
+    <!-- PHONE -->
+    <h1 class="text-3xl mb-4"><i class="fa-solid fa-mobile mr-4"></i>ĐIỆN THOẠI NỔI BẬT NHẤT</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+      <div *ngFor="let phone of phones" class="bg-white p-4 rounded shadow-md border border-header-bg">
+        <img src="{{phone.image}}" alt="" srcset="" class="mb-4">
+        <h3 class="text-xl font-semibold mb-1">{{ phone.name }}</h3>
+        <p class="text-xl mb-2">${{ phone.price }}</p>
+        <div>
+          <button class="p-2 bg-header-bg text-white rounded-lg mr-1">Thêm vào giỏ hàng</button>
+          <button class="p-2 bg-header-bg text-white rounded-lg">Mua ngay</button>
+        </div>
+      </div>
+    </div>
+    <!-- LAPTOP -->
+    <h1 class="text-3xl mb-4"><i class="fa-solid fa-laptop mr-4"></i>LAPTOP</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+      <div *ngFor="let laptop of laptops" class="bg-white p-4 rounded shadow-md border border-header-bg">
+        <img src="{{laptop.image}}" alt="" srcset="" class="mb-4">
+        <h3 class="text-xl font-semibold mb-1">{{ laptop.name }}</h3>
+        <p class="text-xl mb-2">${{ laptop.price }}</p>
+        <div>
+          <button class="p-2 bg-header-bg text-white rounded-lg mr-1">Thêm vào giỏ hàng</button>
+          <button class="p-2 bg-header-bg text-white rounded-lg">Mua ngay</button>
+        </div>
+      </div>
+    </div>
+    <!-- PC -->
+    <h1 class="text-3xl mb-4"><i class="fa-solid fa-laptop mr-4"></i>MÁY TÍNH ĐỂ BÀN</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div *ngFor="let PC of PCs" class="bg-white p-4 rounded shadow-md border border-header-bg">
+        <img src="{{PC.image}}" alt="" srcset="" class="mb-4">
+        <h3 class="text-xl font-semibold mb-1">{{ PC.name }}</h3>
+        <p class="text-xl mb-2">${{ PC.price }}</p>
+        <div>
+          <button class="p-2 bg-header-bg text-white rounded-lg mr-1">Thêm vào giỏ hàng</button>
+          <button class="p-2 bg-header-bg text-white rounded-lg">Mua ngay</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

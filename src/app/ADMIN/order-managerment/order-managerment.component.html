@@ -1,0 +1,286 @@
+<div class="overflow-y-auto h-full">
+  <h1 class="w-4/5 text-center text-4xl font-bold mt-8">QUẢN LÝ ĐƠN HÀNG</h1>
+      <!-- Header -->
+      <div class="flex justify-between w-4/5">
+        <!-- Search Input -->
+        <div>
+          <div class="flex items-center space-x-2 mt-8">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Nhập tên khách hàng"
+              class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ml-1"
+            />
+            <button class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none"><i class="fa-solid fa-magnifying-glass mr-2"></i>Tìm kiếm</button>
+          </div>
+        </div>
+        <!-- Button Export Report and Create Order -->
+        <div class="flex justify-end mt-8">
+          <!-- Create OrderDetail -->
+          <div>
+            <button class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none mr-4" (click)="openAddProductModal()"><i class="fa-solid fa-plus mr-2"></i>Thêm sản phẩm cho đơn hàng</button>
+          </div>
+          <!-- Export Report -->
+          <div class="relative group">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 z-40">Xuất báo cáo</button>
+            <!-- Dropdown options -->
+            <div class="absolute left-0 mt-2 w-32 bg-white border border-gray-300 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <button class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 z-40" ><i class="fa-regular fa-file-pdf mr-2 text-red-500"></i>PDF</button>
+              <button class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 z-40" ><i class="fa-regular fa-file-excel mr-2 text-green-500"></i>EXCEL</button>
+            </div>
+          </div>
+          <!-- Create Order -->
+          <button class="px-4 py-2 text-white rounded-md bg-blue-600 hover:bg-blue-700 hover:text-white ml-4 -mr-40" (click)="openCreateOrderModal()">Tạo đơn hàng</button>
+        </div>
+      </div>
+       <!-- Order Table -->
+    <table class="w-11/12 h-fit table-auto mt-8">
+      <thead class="bg-gray-100 top-0">
+        <tr>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Mã đơn</th>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Khách hàng</th>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Ngày tạo</th>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Ngày sửa</th>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Trạng thái đơn</th>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Phương thức thanh toán</th>
+          <th class="px-4 py-2 text-center text-sm font-semibold text-gray-600">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders" class="border-b">
+          <td class="px-4 text-center py-2 text-sm text-gray-800 hover:cursor-pointer" (click)="openOrderModal(order.id)">{{ order.id }}</td>
+          <td class="px-4 text-center py-2 text-sm text-gray-800">{{ order.user ? (order.user.lastName + " " + order.user.firstName) : 'Không có thông tin' }}</td>
+          <td class="px-4 text-center py-2 text-sm text-gray-600">{{ formatDate(order.createdAt) }}</td>
+          <td class="px-4 text-center py-2 text-sm text-gray-600">{{ formatDate(order.updatedAt) }}</td>
+          <td class="px-4 text-center py-2 text-sm"
+            [ngClass]="{
+                'text-gray-500': order.status === 'Pending',
+                'text-yellow-500': order.status === 'Processing',
+                'text-blue-500': order.status === 'Confirmed',
+                'text-green-400': order.status === 'Shipping',
+                'text-green-800': order.status === 'Delivered',
+                'text-blue-800': order.status === 'Completed',
+                'text-red-500': order.status === 'Cancelled',
+                'text-red-800': order.status === 'Refunded'
+              }">
+            {{ order.status }}
+          </td>
+          <td class="px-4 text-center py-2 text-sm text-gray-600">{{ order.paymentMethodEnum }}</td>
+          <td class="px-4 text-center py-2 text-sm text-gray-800">
+            <i class="fa-solid fa-pen-to-square text-blue-600 hover:cursor-pointer"(click)="openEditModal(order)"></i>
+            <i class="fa-solid fa-trash ml-4 text-red-600 hover:cursor-pointer" (click)="handleDeleteOrder(order.id)"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+<!-- Modal Order Detail -->
+<div *ngIf="isModalVisible" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white w-2/4 rounded-lg shadow-lg p-6 relative">
+    <!-- Close button -->
+    <button class="absolute top-2 right-2 text-gray-600 hover:text-red-600" (click)="closeOrderModal()"><i class="fa-solid fa-times"></i></button>
+    <!-- Modal content -->
+    <h2 class="text-2xl font-semibold mb-4 text-center">CHI TIẾT ĐƠN HÀNG</h2>
+    <p><strong>Mã đơn:</strong> {{ selectedOrderId }}</p>
+    <!-- Hiển thị orderDetails dưới dạng các card -->
+    <div class="grid grid-cols-1 gap-4 mt-4 mb-4">
+      <!-- Card -->
+      <div *ngFor="let orderDetail of orderDetails" class="bg-gray-100 p-4 rounded-lg shadow-md flex">
+        <!-- Product Info (Image and Name, Price) -->
+        <div class="flex-shrink-0 w-44 h-44 mr-4">
+          <img [src]="orderDetail.product.image" alt="Product Image" class="w-full h-full object-cover rounded-lg">
+        </div>
+        <div class="flex flex-col justify-between w-full">
+          <!-- Product Name and Price -->
+          <div>
+            <h3 class="text-2xl font-semibold truncate">{{ orderDetail.product.name }}</h3>
+            <p class="text-lg text-gray-600">Giá: ${{ orderDetail.unitPrice }}</p>
+          </div>
+          <!-- Quantity, Payment Method, Status -->
+          <div class="mt-4">
+              <div>
+                <label for="quantity" class="block text-sm mr-12">Số lượng</label>
+                <input
+                  type="number"
+                  [(ngModel)]="orderDetail.quantity"
+                  class="p-2 border border-gray-300 rounded-md w-16 text-center"
+                  min="1">
+              </div>
+          </div>
+          <!-- Total Price -->
+          <div class="mt-4">
+            <div class="flex justify-between">
+              <p><strong>Tổng tiền:</strong> ${{ orderDetail.totalPrice }}</p>
+              <div>
+                <button
+                  type="submit"
+                  (click)="updateOrderDetail(orderDetail)"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+                  Cập nhật</button>
+                <button
+                  (click)="deleteOrderDetail(orderDetail.id)"
+                  class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-red-500 hover:text-white ml-4">
+                  Xóa</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Card -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal Create Order -->
+<div *ngIf="isCreateOrderModalVisible" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white w-2/4 rounded-lg shadow-lg p-6 relative">
+    <!-- Close button -->
+    <button class="absolute top-2 right-2 text-gray-600 hover:text-red-600" (click)="closeCreateOrderModal()"><i class="fa-solid fa-times"></i></button>
+    <!-- Modal content -->
+    <h2 class="text-2xl font-semibold mb-4 text-center">Tạo đơn hàng</h2>
+    <form (ngSubmit)="handleCreateOrder()">
+      <!-- Select User -->
+      <div class="mb-4">
+        <label for="user" class="block text-sm font-medium text-gray-700">Người đặt hàng</label>
+        <select [(ngModel)]="newOrder.userId" name="userId" required class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+             <option *ngFor="let user of users" [value]="user.id">{{ user.lastName + ' ' + user.firstName }}</option>
+        </select>
+      </div>
+      <!-- Select Status -->
+      <div class="mb-4">
+        <label for="status" class="block text-sm font-medium text-gray-700">Trạng thái</label>
+        <select [(ngModel)]="newOrder.status" name="status" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Shipping">Shipping</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+      </div>
+      <!-- Select Payment Method -->
+      <div class="mb-4">
+        <label for="paymentMethodEnum" class="block text-sm font-medium text-gray-700">Phương thức thanh toán</label>
+        <select [(ngModel)]="newOrder.paymentMethodEnum" name="paymentMethodEnum" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+          <option value="Cash">Cash</option>
+          <option value="Transfer">Transfer</option>
+          <option value="Card">Card</option>
+        </select>
+      </div>
+      <!-- Submit Button -->
+      <div class="text-right">
+        <button type="button" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg mr-2" (click)="closeCreateOrderModal()">Hủy</button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Tạo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Edit Order -->
+<div *ngIf="isEditModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
+  <div class="bg-white p-6 rounded-lg w-1/3 z-30">
+    <h2 class="text-2xl font-semibold mb-4 text-center">CHỈNH SỬA ĐƠN HÀNG</h2>
+    <form (ngSubmit)="handleUpdateOrder()">
+      <div class="mb-4">
+        <label for="user" class="block text-sm font-medium text-gray-700">Người đặt hàng</label>
+        <select [(ngModel)]="selectedOrder.userId" name="userId" required class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+             <option *ngFor="let user of users" [value]="user.id">{{ user.lastName + ' ' + user.firstName }}</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="status" class="block text-sm font-medium text-gray-700">Trạng thái</label>
+        <select [(ngModel)]="selectedOrder.status" name="status" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Shipping">Shipping</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="paymentMethodEnum" class="block text-sm font-medium text-gray-700">Phương thức thanh toán</label>
+        <select [(ngModel)]="selectedOrder.paymentMethodEnum" name="paymentMethodEnum" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+          <option value="Cash">Cash</option>
+          <option value="Transfer">Transfer</option>
+          <option value="Card">Card</option>
+        </select>
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md hover:cursor-pointer">Chỉnh sửa</button>
+        <button type="button" (click)="closeEditModal()" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-red-500 hover:text-white ml-4">Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Add Product For Order -->
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" *ngIf="isAddProductModalOpen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+    <h2 class="text-2xl font-bold mb-4 text-center">THÊM SẢN PHẨM CHO ĐƠN HÀNG</h2>
+    <form (ngSubmit)="handleAddProduct()">
+      <div class="mb-4">
+        <label for="orderId" class="block text-sm font-semibold text-gray-700">Mã đơn hàng</label>
+        <input
+          type="text"
+          id="orderId"
+          [(ngModel)]="newProduct.order"
+          name="orderId"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label for="productId" class="block text-sm font-semibold text-gray-700">Sản phẩm</label>
+        <select
+          id="productId"
+          [(ngModel)]="newProduct.product"
+          name="productId"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="" disabled selected>Chọn sản phẩm</option>
+          <option *ngFor="let product of products" [value]="product.id">
+            {{ product.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="quantity" class="block text-sm font-semibold text-gray-700">Số lượng</label>
+        <input
+          type="number"
+          id="quantity"
+          [(ngModel)]="newProduct.quantity"
+          name="quantity"
+          min="1"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button
+        type="submit"
+        class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+        >
+        Thêm
+      </button>
+      <button
+        type="button"
+        class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-red-500 hover:text-white ml-4"
+        (click)="closeAddProductModal()"
+      >
+        Hủy
+      </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+

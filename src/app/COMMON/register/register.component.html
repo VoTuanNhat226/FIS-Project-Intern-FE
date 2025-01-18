@@ -1,0 +1,93 @@
+<div class="register-page min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-semibold text-center mb-6">ĐĂNG KÝ</h2>
+
+    <form action="#" method="POST">
+      <!-- Firstname Input -->
+      <div class="mb-4">
+        <label for="firstname" class="block text-sm font-medium text-gray-700">Tên</label>
+        <input
+          [(ngModel)]="firstName"
+          type="text"
+          id="firstname"
+          name="firstname"
+          required
+          placeholder="Nhập tên"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
+
+      <!-- lastname Input -->
+      <div class="mb-6">
+        <label for="lastname" class="block text-sm font-medium text-gray-700">Họ</label>
+        <input
+          [(ngModel)]="lastName"
+          type="lastname"
+          id="lastname"
+          name="lastname"
+          required
+          placeholder="Nhập họ"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
+
+       <!-- email Input -->
+       <div class="mb-6">
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input
+          [(ngModel)]="email"
+          type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="Nhập email"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+      </div>
+
+        <!-- Username Input -->
+        <div class="mb-4">
+          <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
+          <input
+            [(ngModel)]="username"
+            type="text"
+            id="username"
+            name="username"
+            required
+            placeholder="Nhập tên đăng nhập"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+
+        <!-- Password Input -->
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
+          <input
+            [(ngModel)]="password"
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Nhập mật khẩu"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+
+        <!-- Confirm Password-->
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700">Nhập lại mật khẩu</label>
+          <input
+            [(ngModel)]="confirmPassword"
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+            placeholder="Nhập mật khẩu"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+
+      <!-- Submit Button -->
+      <button
+        (click)="onRegister()"
+        type="submit"
+        class="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        Đăng Ký
+      </button>
+    </form>
+  </div>
+</div>
